@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard - CV SmartCheck</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* Aseguramos que el layout sea flexible y ocupe toda la pantalla */
+    body {
+      display: flex;
+      flex-direction: column;
+      height: 100vh; /* Ocupa el 100% de la altura de la pantalla */
+    }
+
+    main {
+      margin-top: 120px;
+      padding: 20px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      overflow: auto; /* Permite el desplazamiento si el contenido excede la altura */
+    }
+
+    footer {
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 10px;
+      color: #a0b0c0;
+      font-size: 14px;
+      position: relative; /* Asegura que el footer esté en la parte inferior */
+      bottom: 0;
+      width: 100%;
+      text-align: center;
+    }
+
+    .welcome {
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+
+    select {
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 16px;
+      margin-bottom: 20px;
+      width: 300px;
+    }
+
+    .upload-section input[type="file"] {
+      display: none;
+    }
+
+    .upload-label, #ver-historial-btn, #cerrar-sesion-btn {
+      background-color: #5c7cc3;
+      padding: 10px 20px;
+      border-radius: 15px;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.3s;
+      margin: 0 10px;
+    }
+
+    .upload-label:hover, #ver-historial-btn:hover, #cerrar-sesion-btn:hover {
+      background-color: #3e4a88;
+      transform: scale(1.05);
+    }
+
+    .progress-bar {
+      background: #555;
+      border-radius: 20px;
+      width: 80%;
+      height: 25px;
+      margin: 30px 0;
+      overflow: hidden;
+      display: none;
+    }
+
+    .progress {
+      background: #00ffff;
+      height: 100%;
+      width: 0;
+      transition: width 2s ease;
+    }
+
+    .results {
+      display: none;
+      margin-top: 30px;
+      width: 100%;
+      max-width: 700px;
+    }
+
+    .selected-occupation {
+      font-size: 20px;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    .score {
+      font-size: 36px;
+      margin-top: 20px;
+    }
+
+    .category-scores {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-top: 30px;
+    }
+
+    .category {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 15px;
+      border-radius: 15px;
+      width: 150px;
+    }
+
+    .recommendations {
+      margin-top: 40px;
+      text-align: left;
+    }
+
+    .recommendations ul {
+      list-style: inside disc;
+    }
+
+    .missing-items {
+      margin-top: 30px;
+      text-align: left;
+    }
+
+    .cv-history {
+      margin-top: 40px;
+      text-align: left;
+      max-width: 700px;
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="logo-container">
+      <img src="cv-icon.png" alt="CV Logo" class="cv-logo" />
+      <h1>CV SmartCheck</h1>
+    </div>
+    <nav>
+      <a href="index.html" id="cerrar-sesion-btn" class="btn">Cerrar sesión</a>
+      <button id="ver-historial-btn" class="btn">Mis Análisis Anteriores</button>
+    </nav>
+  </header>
+
+  <main>
+    <div class="welcome">¡Bienvenido, <span id="nombreUsuario">Usuario</span>!</div>
+
+    <label for="ocupacion">Selecciona la ocupación:</label>
+    <select id="ocupacion" required>
+      <option value="">-- Elige una ocupación --</option>
+      <option>Desarrollador Full Stack</option>
+      <option>Ingeniero DevOps</option>
+      <option>Especialista en Ciberseguridad</option>
+      <option>Ingeniero de Datos</option>
+      <option>Científico de Datos / Ingeniero de Machine Learning</option>
+      <option>Administrador de Bases de Datos (DBA)</option>
+      <option>Arquitecto de Software</option>
+      <option>Ingeniero de Redes</option>
+      <option>Desarrollador de Aplicaciones Móviles</option>
+      <option>Ingeniero de Inteligencia Artificial / Deep Learning</option>
+      <option>Ingeniero Cloud / Ingeniero de Infraestructura en la Nube</option>
+      <option>Ingeniero de Pruebas Automatizadas (QA Automation Engineer)</option>
+      <option>Consultor en Arquitectura Cloud y Transformación Digital</option>
+      <option>Administrador de Sistemas Linux/Unix</option>
+      <option>Especialista en Blockchain y Criptomonedas</option>
+      <option>Ingeniero de Automatización de Infraestructura</option>
+      <option>Desarrollador Front-End Especializado</option>
+      <option>Ingeniero de Integración / Desarrollador de APIs</option>
+      <option>Ingeniero de Big Data</option>
+      <option>Ingeniero IoT (Internet of Things)</option>
+    </select>
+
+    <div class="upload-section">
+      <label for="file-upload" class="upload-label">Subir mi CV</label>
+      <input id="file-upload" type="file" accept=".pdf,.docx" />
+    </div>
+
+    <div class="progress-bar" id="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+
+    <div class="results" id="results">
+      <div class="selected-occupation" id="ocupacion-seleccionada"></div>
+      <div class="score" id="puntaje-general">Puntaje General: 85/100</div>
+
+      <div class="category-scores">
+        <div class="category">Educación: 90</div>
+        <div class="category">Experiencia: 80</div>
+        <div class="category">Habilidades: 85</div>
+        <div class="category">Diseño: 75</div>
+      </div>
+
+      <div class="recommendations">
+        <h3>Recomendaciones para mejorar:</h3>
+        <ul>
+          <li>Agrega más detalles sobre tu experiencia laboral.</li>
+          <li>Mejora el diseño visual del CV.</li>
+          <li>Incluye certificaciones relevantes.</li>
+        </ul>
+      </div>
+
+      <div class="missing-items">
+        <h3>Lo que le falta a tu CV:</h3>
+        <ul id="missing-list"></ul>
+      </div>
+
+      <div class="cv-history" id="cv-history" style="display: none;">
+        <h3>Historial de CVs Analizados</h3>
+        <table style="width:100%; margin-top: 10px;">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Ocupación</th>
+              <th>Puntaje</th>
+            </tr>
+          </thead>
+          <tbody id="historial-cuerpo"></tbody>
+        </table>
+        <div id="historial-vacio" style="display:none; color: #ff4c4c;">No hay historial disponible.</div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 CV SmartCheck. Todos los derechos reservados.</p>
+  </footer>
+
+  <script>
+    const nombreGuardado = localStorage.getItem("nombreUsuario") || "Usuario";
+    document.getElementById("nombreUsuario").textContent = nombreGuardado;
+
+    const fileUpload = document.getElementById("file-upload");
+    const progressBar = document.getElementById("progress-bar");
+    const progress = document.getElementById("progress");
+    const results = document.getElementById("results");
+    const ocupacionSelect = document.getElementById("ocupacion");
+    const ocupacionMostrada = document.getElementById("ocupacion-seleccionada");
+    const puntajeLabel = document.getElementById("puntaje-general");
+    const missingList = document.getElementById("missing-list");
+
+    document.getElementById("ver-historial-btn").addEventListener("click", () => {
+      const historialDiv = document.getElementById("cv-history");
+      if (historialDiv.style.display === "none") {
+        historialDiv.style.display = "block";
+        mostrarHistorial();
+      } else {
+        historialDiv.style.display = "none";
+      }
+    });
+
+    function mostrarHistorial() {
+      const historial = JSON.parse(localStorage.getItem("cvHistorial")) || [];
+      const cuerpo = document.getElementById("historial-cuerpo");
+      const historialVacio = document.getElementById("historial-vacio");
+
+      if (historial.length === 0) {
+        historialVacio.style.display = "block";
+      } else {
+        historialVacio.style.display = "none";
+      }
+
+      cuerpo.innerHTML = "";
+      historial.forEach(entry => {
+        const row = document.createElement("tr");
+        row.innerHTML = `<td>${entry.fecha}</td><td>${entry.ocupacion}</td><td>${entry.puntaje}</td>`;
+        cuerpo.appendChild(row);
+      });
+    }
+
+    const ocupacionesFaltantes = {
+      "Desarrollador Full Stack": [
+        "Falta experiencia en back-end",
+        "Falta proyectos de front-end",
+        "Falta agregar tecnologías como React, Node.js",
+        "Incluir frameworks como Express.js"
+      ]
+    };
+
+    function mostrarFaltantes(ocupacion) {
+      const faltantesList = ocupacionesFaltantes[ocupacion] || [];
+      missingList.innerHTML = "";
+      faltantesList.forEach(item => {
+        const listItem = document.createElement("li");
+        listItem.textContent = item;
+        missingList.appendChild(listItem);
+      });
+    }
+
+    function obtenerFechaHoraActual() {
+      const now = new Date();
+      return now.toLocaleString("es-PE");
+    }
+
+    function generarPuntaje() {
+      return Math.floor(Math.random() * 31) + 70;
+    }
+
+    function agregarAlHistorial(ocupacion, puntaje) {
+      const historial = JSON.parse(localStorage.getItem("cvHistorial")) || [];
+      historial.unshift({
+        fecha: obtenerFechaHoraActual(),
+        ocupacion,
+        puntaje
+      });
+      localStorage.setItem("cvHistorial", JSON.stringify(historial.slice(0, 3)));
+    }
+
+    fileUpload.addEventListener("change", () => {
+      const ocupacionElegida = ocupacionSelect.value;
+      if (!ocupacionElegida) {
+        alert("Por favor, selecciona una ocupación antes de subir tu CV.");
+        return;
+      }
+
+      const puntajeGenerado = generarPuntaje();
+      progressBar.style.display = "block";
+      progress.style.width = "0%";
+      results.style.display = "none";
+
+      let percent = 0;
+      const interval = setInterval(() => {
+        percent += 1;
+        progress.style.width = percent + "%";
+
+        if (percent >= 100) {
+          clearInterval(interval);
+          setTimeout(() => {
+            ocupacionMostrada.textContent = `Resultados para: ${ocupacionElegida}`;
+            puntajeLabel.textContent = `Puntaje General: ${puntajeGenerado}/100`;
+            results.style.display = "block";
+            mostrarFaltantes(ocupacionElegida);
+
+            agregarAlHistorial(ocupacionElegida, puntajeGenerado);
+            mostrarHistorial();
+          }, 500);
+        }
+      }, 30);
+    });
+
+    mostrarHistorial(); 
+  </script>
+</body>
+</html>
