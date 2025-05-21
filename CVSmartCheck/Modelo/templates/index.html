@@ -133,12 +133,64 @@
                                             <div class="progress" style="width: {{ (puntos / total) * 100 }}%"></div>
                                         </div>
                                     </td>
-                                    <td>{{ comentario }}</td>
+                                    <td>
+                                        {% if (puntos / total) >= 0.85 %}
+                                            ✅ Excelente{% if "BERT:" in comentario %} {{comentario}}{% endif %}
+                                        {% elif (puntos / total) >= 0.7 %}
+                                            ✅ Bueno{% if "BERT:" in comentario %} {{comentario}}{% endif %}
+                                        {% elif (puntos / total) >= 0.6 %}
+                                            ⚠️ Aceptable{% if "BERT:" in comentario %} {{comentario}}{% endif %}
+                                        {% elif (puntos / total) >= 0.4 %}
+                                            ⚠️ Regular{% if "BERT:" in comentario %} {{comentario}}{% endif %}
+                                        {% else %}
+                                            ❌ Deficiente{% if "BERT:" in comentario %} {{comentario}}{% endif %}
+                                        {% endif %}
+                                    </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
                     </div>
+                    <!-- Dentro de la pestaña "Detalles" - Añadir después de la tabla de resultados -->
+                    {% if metricas_bert %}
+                    <div class="bert-metrics glass-panel">
+                        <h3><i class="fas fa-brain"></i> Análisis Semántico con BERT</h3>
+                        <p class="bert-intro">El modelo BERT evalúa la calidad semántica y relevancia contextual del contenido para el puesto seleccionado.</p>
+                        
+                        <table class="bert-table">
+                            <thead>
+                                <tr>
+                                    <th>Sección</th>
+                                    <th>Similitud Semántica</th>
+                                    <th>Nivel</th>
+                                    <th>Ajuste</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for metrica in metricas_bert %}
+                                <tr>
+                                    <td><strong>{{ metrica.seccion }}</strong></td>
+                                    <td>
+                                        <div class="similitud-container">
+                                            <div class="similitud-bar" style="width: {{ metrica.similitud }}%;"></div>
+                                            <span class="similitud-text">{{ metrica.similitud }}%</span>
+                                        </div>
+                                    </td>
+                                    <td>{{ metrica.nivel }}</td>
+                                    <td class="ajuste-bert {% if metrica.ajuste > 0 %}positivo{% elif metrica.ajuste < 0 %}negativo{% endif %}">
+                                        {{ '+' if metrica.ajuste > 0 else '' }}{{ metrica.ajuste }}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        
+                        <div class="bert-explanation">
+                            <div class="explanation-title"><i class="fas fa-info-circle"></i> ¿Qué mide BERT?</div>
+                            <p>BERT analiza la calidad contextual y la similitud semántica entre el CV y un perfil ideal para el puesto seleccionado. A diferencia de un simple análisis de palabras clave, evalúa el significado, la relevancia y la sofisticación del contenido.</p>
+                        </div>
+                    </div>
+                    {% endif %}
                 </div>
 
                 <div id="recomendaciones" class="tab-content">

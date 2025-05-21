@@ -450,97 +450,126 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         else if (seccion === "Certificados") {
-            if (porcentaje < 40) {
-                mensaje = "Faltan certificaciones relevantes que validen tus conocimientos técnicos. Incluye certificaciones actuales relacionadas con el puesto, especificando la institución emisora y fecha de obtención.";
-            } else if (porcentaje < 70) {
-                mensaje = "Has incluido algunas certificaciones, pero considera obtener otras más específicas y actuales para el puesto. Las certificaciones técnicas recientes aumentan significativamente tu competitividad.";
-            } else {
+            // Extraer los puntos actuales de la sección
+            const [puntosActuales, puntosTotales] = puntos.split('/').map(n => parseInt(n.trim()));
+            
+            // Cálculo de porcentaje correcto
+            const porcentajeReal = (puntosActuales / puntosTotales) * 100;
+            
+            // Determinación del mensaje basado en el porcentaje real
+            if (porcentajeReal >= 90) {
                 mensaje = "Excelentes certificaciones, actualizadas y altamente relevantes para el puesto. Demuestran compromiso con el desarrollo profesional y validación formal de tus conocimientos técnicos.";
+                icono = '<i class="fas fa-check-circle"></i>';
+                iconoColor = '#30D158';
+            } else if (porcentajeReal >= 70) {
+                mensaje = "Buenas certificaciones. Podrías complementar con más específicas para el puesto. Las certificaciones reconocidas en la industria mejoran significativamente tu perfil.";
+                icono = '<i class="fas fa-check-circle"></i>';
+                iconoColor = '#30D158';
+            } else if (porcentajeReal >= 50) {
+                mensaje = "Certificaciones básicas presentes. Para destacar, añade certificaciones más relevantes y actuales relacionadas con las tecnologías clave del puesto.";
+                icono = '<i class="fas fa-exclamation-circle"></i>';
+                iconoColor = '#FFD60A';
+            } else {
+                mensaje = "Faltan certificaciones relevantes. Incluye certificaciones actuales relacionadas con el puesto, especificando institución emisora y fecha de obtención.";
+                icono = '<i class="fas fa-exclamation-triangle"></i>';
+                iconoColor = '#FF453A';
+            }
+            
+            // Verificar si hay inconsistencia entre el puntaje visual y el texto
+            const feedbackElement = elemento.querySelector('td:nth-child(4)');
+            if (feedbackElement) {
+                const feedbackActual = feedbackElement.textContent.trim();
                 
-                // Si tiene certificaciones pero puntuación baja, mejorar
-                if (porcentaje >= 70 && porcentaje < 95) {
+                // Si hay una inconsistencia grave (ej: puntuación alta con mensaje deficiente)
+                if (porcentajeReal >= 70 && feedbackActual.includes("Deficiente")) {
+                    // Corrección inmediata del feedback para alinearlo con la puntuación real
                     setTimeout(() => {
-                        const tieneCertificaciones = texto_cv.match(/certificad[oa]|certific|curso|diploma|AWS|Microsoft|Google|Cisco|Oracle|Udemy|Coursera/gi);
-                        
-                        if (tieneCertificaciones && tieneCertificaciones.length >= 2) {
-                            // Mejora a 8/10 o 9/10 según cantidad
-                            const puntosElement = elemento.querySelector('td:nth-child(2)');
-                            if (puntosElement) {
-                                const puntosActuales = parseInt(puntosElement.textContent);
-                                if (puntosActuales < 8) {
-                                    // Si tiene varias certificaciones, aumentar a 8/10
-                                    puntosElement.textContent = "8 / 10";
-                                    
-                                    // Actualizar la barra de progreso
-                                    const progressElement = elemento.querySelector('.progress');
-                                    if (progressElement) {
-                                        progressElement.style.width = "80%";
-                                    }
-                                    
-                                    // Actualizar el mensaje de feedback
-                                    const feedbackElement = elemento.querySelector('td:nth-child(4)');
-                                    if (feedbackElement) {
-                                        feedbackElement.innerHTML = "✅ Bueno: Complementa con más certificaciones";
-                                    }
-                                    
-                                    // Cambiar el color de la fila a verde
-                                    elemento.classList.remove('bajo', 'medio');
-                                    elemento.classList.add('alto');
-                                }
+                        if (feedbackElement) {
+                            if (porcentajeReal >= 90) {
+                                feedbackElement.innerHTML = "✅ Excelente: Certificaciones completas y relevantes";
+                            } else if (porcentajeReal >= 70) {
+                                feedbackElement.innerHTML = "✅ Bueno: Complementa con más certificaciones";
                             }
+                            
+                            // Actualizar clases para colores correctos
+                            elemento.classList.remove('bajo');
+                            elemento.classList.add('alto');
                         }
-                    }, 100);
+                    }, 50);
+                }
+                // Caso inverso: puntuación baja con mensaje excelente
+                else if (porcentajeReal < 50 && feedbackActual.includes("Excelente")) {
+                    setTimeout(() => {
+                        if (feedbackElement) {
+                            feedbackElement.innerHTML = "❌ Deficiente: Añade certificaciones relevantes";
+                            
+                            // Actualizar clases para colores correctos
+                            elemento.classList.remove('alto');
+                            elemento.classList.add('bajo');
+                        }
+                    }, 50);
                 }
             }
         }
         else if (seccion === "Idiomas") {
-            if (porcentaje < 40) {
-                mensaje = "La sección de idiomas necesita mejoras. Añade todos los idiomas que dominas con su nivel específico según marcos reconocidos (A1-C2). El dominio de inglés es especialmente importante en roles técnicos.";
-            } else if (porcentaje < 70) {
-                mensaje = "Tu sección de idiomas es adecuada pero podría mejorar. Especifica más claramente tu nivel en cada idioma y considera mencionar experiencias prácticas de uso (ej: 'Experiencia en documentación técnica en inglés').";
+            // Extraer los puntos actuales de la sección
+            const [puntosActuales, puntosTotales] = puntos.split('/').map(n => parseInt(n.trim()));
+            
+            // Cálculo de porcentaje correcto
+            const porcentajeReal = (puntosActuales / puntosTotales) * 100;
+            
+            // Determinación del mensaje basado en el porcentaje real
+            if (porcentajeReal >= 90) {
+                mensaje = "Excelente sección de idiomas con niveles claramente especificados según estándares reconocidos. El dominio lingüístico demostrado es adecuado para las exigencias del puesto y potencia tu perfil internacional.";
+                icono = '<i class="fas fa-check-circle"></i>';
+                iconoColor = '#30D158';
+            } else if (porcentajeReal >= 70) {
+                mensaje = "Buena información de idiomas. Para mejorar, especifica niveles según marcos reconocidos (A1-C2) y menciona experiencias prácticas como redacción técnica o participación en reuniones internacionales.";
+                icono = '<i class="fas fa-check-circle"></i>';
+                iconoColor = '#30D158';
+            } else if (porcentajeReal >= 50) {
+                mensaje = "Información básica de idiomas presente. Es importante detallar mejor tus niveles en cada idioma y destacar tu dominio del inglés técnico, esencial para roles en tecnología.";
+                icono = '<i class="fas fa-exclamation-circle"></i>';
+                iconoColor = '#FFD60A';
             } else {
-                mensaje = "Tu sección de idiomas está por un buen camino pero no olvides especificar mucho mas tu nivel de idioma ";
+                mensaje = "Falta información detallada sobre idiomas. Añade todos los idiomas que dominas con niveles específicos (A1-C2 o básico/intermedio/avanzado/nativo). El inglés es especialmente importante en roles técnicos.";
+                icono = '<i class="fas fa-exclamation-triangle"></i>';
+                iconoColor = '#FF453A';
+            }
+            
+            // Verificar si hay inconsistencia entre el puntaje visual y el texto
+            const feedbackElement = elemento.querySelector('td:nth-child(4)');
+            if (feedbackElement) {
+                const feedbackActual = feedbackElement.textContent.trim();
                 
-                // Si tiene idiomas bien especificados pero puntuación baja, mejorar
-                if (porcentaje >= 70 && porcentaje < 95) {
+                // Si hay una inconsistencia grave (ej: puntuación alta con mensaje deficiente)
+                if (porcentajeReal >= 70 && feedbackActual.includes("Deficiente")) {
+                    // Corrección inmediata del feedback para alinearlo con la puntuación real
                     setTimeout(() => {
-                        const tieneIdiomasDetallados = texto_cv.match(/inglés|english|español|spanish|nivel|level|B1|B2|C1|C2|fluent|fluido|nativo|native|avanzado|advanced/gi);
-                        const tieneCertificacion = texto_cv.match(/TOEFL|IELTS|Cambridge|DELE|DALF|Goethe/gi);
-                        
-                        if (tieneIdiomasDetallados && tieneIdiomasDetallados.length >= 3) {
-                            // Mejorar a 8/10 o más según detalle
-                            const puntosElement = elemento.querySelector('td:nth-child(2)');
-                            if (puntosElement) {
-                                const puntosActuales = parseInt(puntosElement.textContent);
-                                let nuevaPuntuacion = 8;
-                                
-                                // Si además tiene certificaciones de idiomas, subir a 9/10
-                                if (tieneCertificacion) {
-                                    nuevaPuntuacion = 9;
-                                }
-                                
-                                if (puntosActuales < nuevaPuntuacion) {
-                                    puntosElement.textContent = nuevaPuntuacion + " / 10";
-                                    
-                                    // Actualizar la barra de progreso
-                                    const progressElement = elemento.querySelector('.progress');
-                                    if (progressElement) {
-                                        progressElement.style.width = (nuevaPuntuacion * 10) + "%";
-                                    }
-                                    
-                                    // Actualizar el mensaje de feedback
-                                    const feedbackElement = elemento.querySelector('td:nth-child(4)');
-                                    if (feedbackElement) {
-                                        feedbackElement.innerHTML = "✅ Muy buena sección de idiomas con niveles claramente especificados. El dominio lingüístico demostrado es adecuado para las exigencias del puesto y potencia tu perfil internacional.";
-                                    }
-                                    
-                                    // Cambiar el color de la fila a verde
-                                    elemento.classList.remove('bajo', 'medio');
-                                    elemento.classList.add('alto');
-                                }
+                        if (feedbackElement) {
+                            if (porcentajeReal >= 90) {
+                                feedbackElement.innerHTML = "✅ Excelente: Niveles de idiomas claramente especificados";
+                            } else if (porcentajeReal >= 70) {
+                                feedbackElement.innerHTML = "✅ Bueno: Detalla competencias específicas";
                             }
+                            
+                            // Actualizar clases para colores correctos
+                            elemento.classList.remove('bajo');
+                            elemento.classList.add('alto');
                         }
-                    }, 100);
+                    }, 50);
+                }
+                // Caso inverso: puntuación baja con mensaje positivo
+                else if (porcentajeReal < 50 && (feedbackActual.includes("Excelente") || feedbackActual.includes("Bueno"))) {
+                    setTimeout(() => {
+                        if (feedbackElement) {
+                            feedbackElement.innerHTML = "❌ Deficiente: Especifica mejor tus niveles de idiomas";
+                            
+                            // Actualizar clases para colores correctos
+                            elemento.classList.remove('alto', 'medio');
+                            elemento.classList.add('bajo');
+                        }
+                    }, 50);
                 }
             }
         }
@@ -548,15 +577,18 @@ document.addEventListener('DOMContentLoaded', function() {
         // Sección de Datos con evaluación MÁS ESTRICTA
         // Modifica esta parte en app.js - función showTooltip
         else if (seccion === "Datos") {
-            // Calcular la puntuación real (0-100%)
-            const porcentajeReal = (obtenidos / total) * 100;
+            // Extraer los puntos actuales de la sección
+            const [puntosActuales, puntosTotales] = puntos.split('/').map(n => parseInt(n.trim()));
             
-            // Determinar el mensaje basado en la puntuación real
-            if (porcentajeReal >= 90) {
+            // Cálculo de porcentaje correcto
+            const porcentajeReal = (puntosActuales / puntosTotales) * 100;
+            
+            // Determinación del mensaje basado en la puntuación real
+            if (porcentajeReal >= 100) {
                 mensaje = "Información de contacto completa y bien presentada. Incluye todos los canales profesionales relevantes y facilita múltiples vías para que los reclutadores te contacten.";
                 icono = '<i class="fas fa-check-circle"></i>';
                 iconoColor = '#30D158';
-            } else if (porcentajeReal >= 80) {
+            } else if (porcentajeReal >= 90) {
                 mensaje = "Muy buena información de contacto, casi completa. Contiene los elementos esenciales y algún perfil profesional. Para ser excelente, considera añadir más vías de contacto profesional.";
                 icono = '<i class="fas fa-check-circle"></i>';
                 iconoColor = '#30D158';
@@ -578,73 +610,323 @@ document.addEventListener('DOMContentLoaded', function() {
                 iconoColor = '#FF453A';
             }
             
-            // CORRECCIÓN: Verificar manualmente el contenido del CV para mostrar tooltip correcto
-            // Extraer el texto del CV desde la vista previa si está disponible
+            // Verificar contenido real del CV mediante la vista previa
             const previewContainer = document.querySelector('.preview-container pre');
             if (previewContainer) {
                 const textoCV = previewContainer.textContent || '';
                 
-                // Detectar elementos básicos y profesionales
-                const tieneNombreCompleto = /[A-Z][a-z]+\s+[A-Z][a-z]+(\s+[A-Z][a-z]+)?/.test(textoCV);
+                // Detección más estricta y detallada de elementos de contacto
+                const tieneNombreCompleto = /Nombre\s*:\s*[A-Z][a-z]+/.test(textoCV) || /^[A-Z][a-z]+\s+[A-Z][a-z]+/.test(textoCV);
                 const tieneEmail = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/.test(textoCV);
                 const tieneTelefono = /(\+\d{1,3}[ -]?)?(\(\d{1,3}\)[ -]?)?\d{3}[ -]?\d{3,4}[ -]?\d{3,4}/.test(textoCV);
                 const tieneLinkedIn = /linkedin\.com\/in\/[a-zA-Z0-9_-]+/.test(textoCV.toLowerCase());
                 const tieneGitHub = /github\.com\/[a-zA-Z0-9_-]+/.test(textoCV.toLowerCase());
                 const tieneWeb = /(portfolio|portafolio|web|website|sitio|blog)[:;\s]+[a-zA-Z0-9][a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/.test(textoCV.toLowerCase());
                 const tieneUbicacion = /(ciudad|ubicación|location|dirección|address|city)[:;]?\s*[A-Z][a-zA-Z]+|[📍🌍🌎🌏🏙️]\s*[A-Z][a-zA-Z]+/.test(textoCV);
+                
                 // Contar perfiles profesionales
                 const perfilesCount = [tieneLinkedIn, tieneGitHub, tieneWeb].filter(Boolean).length;
                 
-                // Si solo tiene email y teléfono, mostrar mensaje básico aunque el puntaje sea alto
-                if (tieneNombreCompleto && tieneEmail && tieneTelefono && perfilesCount === 0 && porcentajeReal > 60) {
+                // Calcular un puntaje real basado en lo que tiene
+                let puntajeCalculado = 0;
+                if (tieneNombreCompleto) puntajeCalculado += 2;
+                if (tieneEmail) puntajeCalculado += 2;
+                if (tieneTelefono) puntajeCalculado += 1.5;
+                if (tieneLinkedIn) puntajeCalculado += 1.5;
+                if (tieneGitHub) puntajeCalculado += 1;
+                if (tieneWeb) puntajeCalculado += 1;
+                if (tieneUbicacion) puntajeCalculado += 1;
+                
+                // Asegurar que el puntaje no exceda el máximo
+                puntajeCalculado = Math.min(10, Math.round(puntajeCalculado));
+                
+                // Log para debugging
+                console.log("Datos detectados:", {
+                    tieneNombreCompleto, tieneEmail, tieneTelefono, tieneLinkedIn, 
+                    tieneGitHub, tieneWeb, tieneUbicacion, puntajeCalculado
+                });
+                
+                // Determinar mensaje basado en contenido real
+                if (puntajeCalculado <= 5) {
+                    mensaje = "La información de contacto es básica o incompleta. Asegúrate de incluir al menos nombre completo, email profesional, teléfono y algún perfil en redes profesionales como LinkedIn.";
+                    iconoColor = '#FFD60A';
+                    icono = '<i class="fas fa-exclamation-circle"></i>';
+                } else if (puntajeCalculado <= 7) {
                     mensaje = "Información de contacto básica pero suficiente. Añade perfiles profesionales online (LinkedIn, GitHub) para facilitar que los reclutadores conozcan mejor tu experiencia y proyectos.";
                     iconoColor = '#FFD60A';
                     icono = '<i class="fas fa-exclamation-circle"></i>';
+                } else {
+                    mensaje = "Buena información de contacto con los elementos esenciales. Incluye múltiples vías de contacto profesional, lo que facilita que los reclutadores te localicen.";
+                    iconoColor = '#30D158';
+                    icono = '<i class="fas fa-check-circle"></i>';
                 }
-                // Si falta email o teléfono, mostrar mensaje de error aunque el puntaje sea alto
-                else if ((!tieneEmail || !tieneTelefono || !tieneUbicacion) && porcentajeReal > 40) {
-                    mensaje = "La información de contacto es incompleta. Asegúrate de incluir al menos tu nombre completo, email profesional, teléfono, dirección o ubicación y algún perfil en redes profesionales como LinkedIn.";
+                
+                // Corregir casos específicos
+                if (tieneNombreCompleto && tieneEmail && tieneTelefono && perfilesCount === 0) {
+                    // Tiene lo básico sin perfiles profesionales (caso común)
+                    mensaje = "Información de contacto básica pero suficiente. Añade perfiles profesionales online (LinkedIn, GitHub) para facilitar que los reclutadores conozcan mejor tu experiencia y proyectos.";
                     iconoColor = '#FFD60A';
                     icono = '<i class="fas fa-exclamation-circle"></i>';
+                    
+                    // ELIMINAR BLOQUE DE MODIFICACIÓN DE UI
+                    /*
+                    const feedbackElement = elemento.querySelector('td:nth-child(4)');
+                    if (feedbackElement) {
+                        const feedbackActual = feedbackElement.textContent || '';
+                        const puntosElement = elemento.querySelector('td:nth-child(2)');
+                        
+                        if (feedbackActual.includes("Excelente") || porcentajeReal > 80) {
+                            setTimeout(() => {
+                                if (puntosElement && parseInt(puntosElement.textContent) > 7) {
+                                    puntosElement.textContent = "7 / 10";
+                                    
+                                    const progressElement = elemento.querySelector('.progress');
+                                    if (progressElement) {
+                                        progressElement.style.width = "70%";
+                                    }
+                                }
+                                
+                                feedbackElement.innerHTML = "⚠️ Aceptable: Información básica, añade perfiles profesionales";
+                                elemento.classList.remove('alto');
+                                elemento.classList.add('medio');
+                            }, 50);
+                        }
+                    }
+                    */
+                }
+                // Si no tiene email o teléfono, esto es un problema serio
+                else if (!tieneEmail || !tieneTelefono) {
+                    mensaje = "La información de contacto es incompleta. Asegúrate de incluir al menos tu nombre completo, email profesional y teléfono. Estos son elementos esenciales para que los reclutadores puedan contactarte.";
+                    iconoColor = '#FF453A';
+                    icono = '<i class="fas fa-exclamation-triangle"></i>';
+                    
+                    // ELIMINAR BLOQUE DE MODIFICACIÓN DE UI
+                    /*
+                    const feedbackElement = elemento.querySelector('td:nth-child(4)');
+                    if (feedbackElement && !feedbackElement.textContent.includes("Deficiente")) {
+                        setTimeout(() => {
+                            const puntosElement = elemento.querySelector('td:nth-child(2)');
+                            if (puntosElement && parseInt(puntosElement.textContent) > 5) {
+                                puntosElement.textContent = "4 / 10";
+                                
+                                const progressElement = elemento.querySelector('.progress');
+                                if (progressElement) {
+                                    progressElement.style.width = "40%";
+                                }
+                            }
+                            
+                            feedbackElement.innerHTML = "❌ Deficiente: Información de contacto incompleta";
+                            elemento.classList.remove('alto', 'medio');
+                            elemento.classList.add('bajo');
+                        }, 50);
+                    }
+                    */
+                }
+                // Si tiene perfiles profesionales completos, es una buena sección
+                else if (perfilesCount >= 2 && tieneNombreCompleto && tieneEmail && tieneTelefono) {
+                    mensaje = "Excelente información de contacto completa y bien presentada. Incluye múltiples vías profesionales de contacto, facilitando que los reclutadores te conozcan y contacten fácilmente.";
+                    iconoColor = '#30D158';
+                    icono = '<i class="fas fa-check-circle"></i>';
+                    
+                    // ELIMINAR BLOQUE DE MODIFICACIÓN DE UI
+                    /*
+                    const feedbackElement = elemento.querySelector('td:nth-child(4)');
+                    if (feedbackElement && (feedbackElement.textContent.includes("Deficiente") || feedbackElement.textContent.includes("Regular"))) {
+                        setTimeout(() => {
+                            const puntosElement = elemento.querySelector('td:nth-child(2)');
+                            if (puntosElement && parseInt(puntosElement.textContent) < 8) {
+                                puntosElement.textContent = "9 / 10";
+                                
+                                const progressElement = elemento.querySelector('.progress');
+                                if (progressElement) {
+                                    progressElement.style.width = "90%";
+                                }
+                            }
+                            
+                            feedbackElement.innerHTML = "✅ Excelente: Información de contacto completa y bien presentada";
+                            elemento.classList.remove('bajo', 'medio');
+                            elemento.classList.add('alto');
+                        }, 50);
+                    }
+                    */
+                }
+                
+                // ELIMINAR BLOQUE DE MODIFICACIÓN DE UI PARA CASO 10/10
+                /*
+                if (porcentajeReal === 100) {
+                    const feedbackElement = elemento.querySelector('td:nth-child(4)');
+                    const realmenteExcelente = tieneNombreCompleto && tieneEmail && tieneTelefono && perfilesCount >= 1;
+                    
+                    if (!realmenteExcelente) {
+                        setTimeout(() => {
+                            const puntosElement = elemento.querySelector('td:nth-child(2)');
+                            if (puntosElement) {
+                                puntosElement.textContent = "6 / 10";
+                                
+                                const progressElement = elemento.querySelector('.progress');
+                                if (progressElement) {
+                                    progressElement.style.width = "60%";
+                                }
+                            }
+                            
+                            if (feedbackElement) {
+                                feedbackElement.innerHTML = "⚠️ Aceptable: Información básica, añade perfiles profesionales";
+                                elemento.classList.remove('alto');
+                                elemento.classList.add('medio');
+                            }
+                        }, 50);
+                    }
+                }
+                */
+            }
+            
+            // ELIMINAR BLOQUE DE MODIFICACIÓN DE UI PARA CASO 10/10
+            /*
+            if (porcentajeReal === 100) {
+                const feedbackElement = elemento.querySelector('td:nth-child(4)');
+                if (feedbackElement && !feedbackElement.textContent.includes("Excelente")) {
+                    setTimeout(() => {
+                        feedbackElement.innerHTML = "✅ Excelente: Información de contacto completa y bien presentada";
+                        elemento.classList.remove('bajo', 'medio');
+                        elemento.classList.add('alto');
+                    }, 50);
                 }
             }
+            */
         }
+
+
         else if (seccion === "Formato") {
-            if (porcentaje < 40) {
-                mensaje = "El formato de tu CV necesita una mejora significativa. Utiliza una estructura clara con secciones bien definidas, viñetas para facilitar la lectura, espaciado consistente, y no más de 2 páginas.";
-            } else if (porcentaje < 70) {
-                mensaje = "El formato de tu CV es funcional pero mejorable. Trabaja en la consistencia visual (espaciado, fuentes, estilo), uso de viñetas para facilitar el escaneo rápido, y priorización visual de la información más relevante.";
+            // Extraer los puntos actuales de la sección
+            const [puntosActuales, puntosTotales] = puntos.split('/').map(n => parseInt(n.trim()));
+            
+            // Cálculo de porcentaje correcto
+            const porcentajeReal = (puntosActuales / puntosTotales) * 100;
+            
+            // Determinación del mensaje basado en el porcentaje real
+            if (porcentajeReal >= 90) {
+                mensaje = "Excelente formato, profesional y bien estructurado. Es visualmente atractivo y prioriza eficazmente la información más relevante. La consistencia visual facilita la lectura rápida del CV.";
+                icono = '<i class="fas fa-check-circle"></i>';
+                iconoColor = '#30D158';
+            } else if (porcentajeReal >= 70) {
+                mensaje = "Buen formato, claro y organizado. Para mejorar aún más, considera ajustar la consistencia visual y optimizar el uso del espacio para destacar tus logros y habilidades más relevantes.";
+                icono = '<i class="fas fa-check-circle"></i>';
+                iconoColor = '#30D158';
+            } else if (porcentajeReal >= 50) {
+                mensaje = "Formato aceptable pero mejorable. Trabaja en la consistencia visual (espaciado, fuentes, estilo), uso de viñetas para facilitar el escaneo rápido, y priorización de información relevante.";
+                icono = '<i class="fas fa-exclamation-circle"></i>';
+                iconoColor = '#FFD60A';
             } else {
-                mensaje = "Excelente formato, profesional y bien estructurado. Es visualmente atractivo y prioriza eficazmente la información más relevante. La consistencia visual facilita la lectura.";
+                mensaje = "El formato de tu CV necesita una mejora significativa. Utiliza una estructura clara con secciones bien definidas, viñetas para facilitar la lectura, espaciado consistente, y limita la extensión a 1-2 páginas.";
+                icono = '<i class="fas fa-exclamation-triangle"></i>';
+                iconoColor = '#FF453A';
+            }
+            
+            // Verificar el contenido real del CV para detectar características específicas de formato
+            const previewContainer = document.querySelector('.preview-container pre');
+            if (previewContainer) {
+                const textoCV = previewContainer.textContent || '';
                 
-                // CORRECCIÓN: Si tiene un buen formato en general (≥ 70%), pero puntuación baja, mejorar visualmente
-                if (porcentaje >= 70 && porcentaje < 90 && tiene_emojis) {
-                    setTimeout(() => {
-                        // Actualizar visualmente la puntuación a un mejor valor
-                        const puntosElement = elemento.querySelector('td:nth-child(2)');
-                        if (puntosElement) {
-                            // Si la puntuación es < 8, actualizar a 8/10
-                            if (parseInt(puntosElement.textContent) < 8) {
-                                puntosElement.textContent = "8 / 10";
+                // Detectar características de formato
+                const tieneSeccionesClaras = /\n[A-ZÑÁÉÍÓÚ][A-ZÑÁÉÍÓÚa-zñáéíóú\s]+\n/.test(textoCV);
+                const tieneViñetas = textoCV.includes('• ') || textoCV.includes('- ') || textoCV.includes('* ') || textoCV.includes('◦ ') || textoCV.includes('▪ ');
+                const tieneEspaciado = textoCV.includes('\n\n');
+                const tieneEmojis = /[\u{1F300}-\u{1F5FF}\u{1F900}-\u{1F9FF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/u.test(textoCV);
+                const tieneFormatoModerno = tieneEmojis || /\|\s+\|/.test(textoCV);
+                
+                // CV con buen formato pero puntuación baja
+                if ((tieneSeccionesClaras && tieneViñetas && tieneEspaciado) || tieneFormatoModerno) {
+                    // Si tiene buen formato real pero puntuación baja, ajustar mensaje y verificar UI
+                    if (porcentajeReal < 60) {
+                        mensaje = "El formato tiene elementos positivos como secciones claras y uso de viñetas. Para mejorar, trabaja en la consistencia visual y asegúrate de priorizar la información más relevante.";
+                        iconoColor = '#FFD60A';
+                        icono = '<i class="fas fa-exclamation-circle"></i>';
+                        
+                        // Verificar si hay inconsistencia con UI y corregirla
+                        const feedbackElement = elemento.querySelector('td:nth-child(4)');
+                        if (feedbackElement && feedbackElement.textContent.includes("Deficiente")) {
+                            setTimeout(() => {
+                                feedbackElement.innerHTML = "⚠️ Regular: Algunos elementos necesitan mejora";
+                                
+                                // Actualizar visualmente la puntuación si es muy baja
+                                const puntosElement = elemento.querySelector('td:nth-child(2)');
+                                if (puntosElement && parseInt(puntosElement.textContent) < 4) {
+                                    puntosElement.textContent = "5 / 10";
+                                    
+                                    // Actualizar la barra de progreso
+                                    const progressElement = elemento.querySelector('.progress');
+                                    if (progressElement) {
+                                        progressElement.style.width = "50%";
+                                    }
+                                }
+                                
+                                elemento.classList.remove('bajo');
+                                elemento.classList.add('medio');
+                            }, 50);
+                        }
+                    }
+                    
+                    // Si tiene formato moderno (con emojis) pero puntuación media, mejorar a bueno
+                    if (tieneFormatoModerno && porcentajeReal >= 50 && porcentajeReal < 70) {
+                        mensaje = "Buen formato con elementos modernos como emojis o estructura visual atractiva. Esto facilita la lectura y demuestra atención al detalle en la presentación.";
+                        iconoColor = '#30D158';
+                        icono = '<i class="fas fa-check-circle"></i>';
+                        
+                        // Verificar si hay inconsistencia con UI y corregirla
+                        const feedbackElement = elemento.querySelector('td:nth-child(4)');
+                        if (feedbackElement && !feedbackElement.textContent.includes("Bueno")) {
+                            setTimeout(() => {
+                                // Actualizar visualmente la puntuación a un mejor valor
+                                const puntosElement = elemento.querySelector('td:nth-child(2)');
+                                if (puntosElement) {
+                                    // Si la puntuación es < 7, actualizar a 7/10
+                                    if (parseInt(puntosElement.textContent) < 7) {
+                                        puntosElement.textContent = "7 / 10";
+                                        
+                                        // Actualizar la barra de progreso
+                                        const progressElement = elemento.querySelector('.progress');
+                                        if (progressElement) {
+                                            progressElement.style.width = "70%";
+                                        }
+                                        
+                                        feedbackElement.innerHTML = "✅ Bueno: Formato moderno";
+                                        elemento.classList.remove('bajo', 'medio');
+                                        elemento.classList.add('alto');
+                                    }
+                                }
+                            }, 50);
+                        }
+                    }
+                }
+                
+                // CV con formato pobre pero puntuación alta (caso de inconsistencia)
+                if (!tieneSeccionesClaras && !tieneViñetas && porcentajeReal > 70) {
+                    mensaje = "El formato necesita mejoras importantes. Estructura el CV con secciones claramente definidas y usa viñetas para facilitar la lectura rápida de la información.";
+                    iconoColor = '#FF453A';
+                    icono = '<i class="fas fa-exclamation-triangle"></i>';
+                    
+                    // Verificar si hay inconsistencia con UI y corregirla
+                    const feedbackElement = elemento.querySelector('td:nth-child(4)');
+                    if (feedbackElement && (feedbackElement.textContent.includes("Excelente") || feedbackElement.textContent.includes("Bueno"))) {
+                        setTimeout(() => {
+                            feedbackElement.innerHTML = "❌ Deficiente: Requiere revisión de estructura";
+                            
+                            // Actualizar visualmente la puntuación
+                            const puntosElement = elemento.querySelector('td:nth-child(2)');
+                            if (puntosElement) {
+                                puntosElement.textContent = "3 / 10";
                                 
                                 // Actualizar la barra de progreso
                                 const progressElement = elemento.querySelector('.progress');
                                 if (progressElement) {
-                                    progressElement.style.width = "80%";
+                                    progressElement.style.width = "30%";
                                 }
-                                
-                                // Actualizar el mensaje de feedback
-                                const feedbackElement = elemento.querySelector('td:nth-child(4)');
-                                if (feedbackElement) {
-                                    feedbackElement.innerHTML = "✅ Muy bueno: Formato profesional y moderno";
-                                }
-                                
-                                // Cambiar el color de la fila a verde
-                                elemento.classList.remove('bajo', 'medio');
-                                elemento.classList.add('alto');
                             }
-                        }
-                    }, 100); // Pequeño retraso para asegurar que los elementos estén disponibles
+                            
+                            elemento.classList.remove('alto', 'medio');
+                            elemento.classList.add('bajo');
+                        }, 50);
+                    }
                 }
             }
         }
