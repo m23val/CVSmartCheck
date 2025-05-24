@@ -130,7 +130,8 @@
                                     <td>{{ puntos }} / {{ total }}</td>
                                     <td>
                                         <div class="progress-container">
-                                            <div class="progress" style="width: {{ (puntos / total) * 100 }}%"></div>
+                                            <!-- Reemplaza la línea problemática por: -->
+                                            <div class="progress" data-puntos="{{ puntos }}" data-total="{{ total }}"></div>
                                         </div>
                                     </td>
                                     <td>
@@ -172,7 +173,7 @@
                                     <td><strong>{{ metrica.seccion }}</strong></td>
                                     <td>
                                         <div class="similitud-container">
-                                            <div class="similitud-bar" style="width: {{ metrica.similitud }}%;"></div>
+                                            <div class="similitud-bar" data-similitud="{{ metrica.similitud }}"></div>
                                             <span class="similitud-text">{{ metrica.similitud }}%</span>
                                         </div>
                                     </td>

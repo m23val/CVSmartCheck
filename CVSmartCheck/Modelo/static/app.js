@@ -1047,3 +1047,23 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+
+// Configurar barras de similitud BERT
+document.addEventListener('DOMContentLoaded', function() {
+    // Barras de progreso normales
+    const progressBars = document.querySelectorAll('.progress[data-puntos]');
+    progressBars.forEach(function(bar) {
+        const puntos = parseFloat(bar.dataset.puntos) || 0;
+        const total = parseFloat(bar.dataset.total) || 1;
+        const porcentaje = Math.round((puntos / total) * 100 * 10) / 10;
+        bar.style.width = porcentaje + '%';
+    });
+    
+    // Barras de similitud BERT
+    const similitudBars = document.querySelectorAll('.similitud-bar[data-similitud]');
+    similitudBars.forEach(function(bar) {
+        const similitud = parseFloat(bar.dataset.similitud) || 0;
+        bar.style.width = similitud + '%';
+    });
+});
