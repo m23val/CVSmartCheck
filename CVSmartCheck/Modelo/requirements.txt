@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+jinja2
+python-docx
+PyMuPDF
+transformers
+torch
+scikit-learn
+numpy
