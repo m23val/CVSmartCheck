@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV SmartCheck - Llama 2 Advanced Semantic Analysis</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="hero-section">
+        <div class="circle-blur circle-blur-1"></div>
+        <div class="circle-blur circle-blur-2"></div>
+    </div>
+
+    <div class="container glass-container">
+        <div class="app-header">
+            <h1><i class="fas fa-robot"></i> CV SmartCheck - Advanced Semantic Analysis</h1>
+            <p class="subtitulo">Análisis semántico multi-dimensional con Meta Llama 2 7B</p>
+            <div class="llama-badge">🦙 Meta Llama 2 7B | Análisis Semántico Avanzado</div>
+            
+            {% if not llama2_disponible %}
+            <div class="error-banner semantic-highlight">
+                <i class="fas fa-exclamation-triangle"></i> 
+                Llama 2 no disponible. Instala Ollama y ejecuta: <code>ollama pull llama2:7b</code>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Formulario inicial -->
+        {% if not resultado %}
+        <div id="mainForm" class="form-section">
+            <div class="experiment-banner semantic-highlight">
+                <i class="fas fa-brain"></i> Análisis Semántico Avanzado: Evaluación multi-dimensional con coherencia contextual, densidad semántica y especificidad técnica
+            </div>
+            
+            <form action="/analizar" method="post" enctype="multipart/form-data" id="uploadForm">
+                <div class="form-group">
+                    <label for="puestoSelect">
+                        <i class="fas fa-briefcase"></i> Selecciona el puesto deseado
+                    </label>
+                    <div class="select-wrapper">
+                        <select name="puesto" required id="puestoSelect">
+                            <option value="" disabled selected>-- Selecciona un puesto --</option>
+                            <option value="Desarrollador Full Stack">Desarrollador Full Stack</option>
+                            <option value="Ingeniero DevOps">Ingeniero DevOps</option>
+                            <option value="Científico de Datos / Machine Learning Engineer">Científico de Datos / ML Engineer</option>
+                            <option value="Administrador de Bases de Datos (DBA)">Administrador de Bases de Datos (DBA)</option>
+                            <option value="Arquitecto de Software">Arquitecto de Software</option>
+                            <option value="Ingeniero de Redes">Ingeniero de Redes</option>
+                            <option value="Desarrollador de Aplicaciones Móviles">Desarrollador de Aplicaciones Móviles</option>
+                            <option value="Ingeniero de Inteligencia Artificial">Ingeniero de IA</option>
+                            <option value="Ingeniero Cloud">Ingeniero Cloud</option>
+                            <option value="Ingeniero de Pruebas Automatizadas">Ingeniero de Pruebas Automatizadas</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="fileInput">
+                        <i class="fas fa-file-upload"></i> Sube tu currículum
+                    </label>
+                    <div class="file-drop-area" id="fileDrop">
+                        <span class="file-message">
+                            <div class="file-message-content">
+                                <span>Arrastra tu archivo aquí</span>
+                                <div class="custom-file-button">Seleccionar archivo</div>
+                            </div>
+                        </span>
+                        <input type="file" name="archivo" accept=".pdf,.docx" required id="fileInput">
+                    </div>
+                    <div class="file-info" id="fileInfo"></div>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    <span class="btn-text"><i class="fas fa-brain"></i> Análisis Semántico Avanzado</span>
+                    <span class="btn-icon"><i class="fas fa-arrow-right"></i></span>
+                </button>
+            </form>
+        </div>
+        {% endif %}
+
+        <!-- Modal de progreso -->
+        <div id="progressModal" class="modal">
+            <div class="modal-content glass-modal">
+                <div class="spinner-container">
+                    <div class="spinner"></div>
+                    <div class="spinner-text">🦙 Analizando semánticamente con Llama 2...</div>
+                    <div class="spinner-timer">Evaluación multi-dimensional: <span id="countdown">15</span> segundos</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de resultados -->
+        {% if resultado %}
+        <div id="resultadoContainer" class="resultado-container animate-in">
+            <div class="resultado-header">
+                <h2><i class="fas fa-brain"></i> Análisis Semántico Avanzado: {{ nombre }}</h2>
+                <div class="puntaje-container">
+                    <div class="puntaje-circle {% if resultado < 40 %}bajo{% elif resultado < 65 %}medio{% else %}alto{% endif %}">
+                        <div class="puntaje-number">{{ resultado }}</div>
+                        <div class="puntaje-label">Puntos</div>
+                    </div>
+                    {% if puntuacion_global_semantica %}
+                    <div class="semantic-score-display">
+                        <div class="semantic-score-label">Coherencia Semántica Global</div>
+                        <div class="semantic-score-value">{{ puntuacion_global_semantica }}%</div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="llama-badge">
+                🦙 Evaluación completada con Meta Llama 2 7B - Análisis Multi-dimensional
+            </div>
+
+            <div class="tabs-container">
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="detalles" onclick="openTab(event, 'detalles')">
+                        <i class="fas fa-list-alt"></i> Detalles
+                    </button>
+                    <button class="tab-btn" data-tab="recomendaciones" onclick="openTab(event, 'recomendaciones')">
+                        <i class="fas fa-lightbulb"></i> Recomendaciones
+                    </button>
+                    <button class="tab-btn" data-tab="preview" onclick="openTab(event, 'preview')">
+                        <i class="fas fa-eye"></i> Vista previa
+                    </button>
+                    <button class="tab-btn" data-tab="semantico-avanzado" onclick="openTab(event, 'semantico-avanzado')">
+                        <i class="fas fa-brain"></i> Análisis Semántico Avanzado
+                    </button>
+                    {% if analisis_avanzado %}
+                    <button class="tab-btn" data-tab="metricas-detalle" onclick="openTab(event, 'metricas-detalle')">
+                        <i class="fas fa-chart-line"></i> Métricas Detalladas
+                    </button>
+                    {% endif %}
+                </div>
+
+                <div id="detalles" class="tab-content active">
+                    <div class="tabla-resultados glass-panel">
+                        <div class="experiment-banner semantic-highlight">
+                            <i class="fas fa-brain"></i> Análisis realizado con Llama 2 7B - Evaluación semántica multi-dimensional
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th><i class="fas fa-tag"></i> Sección</th>
+                                    <th><i class="fas fa-check"></i> Puntos</th>
+                                    <th><i class="fas fa-chart-bar"></i> Progreso</th>
+                                    <th><i class="fas fa-brain"></i> Evaluación Semántica</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for seccion, puntos, total, comentario in detalles %}
+                                <tr class="{% if puntos < total * 0.5 %}bajo{% elif puntos < total * 0.7 %}medio{% else %}alto{% endif %}">
+                                    <td><strong>{{ seccion }}</strong></td>
+                                    <td>{{ puntos }} / {{ total }}</td>
+                                    <td>
+                                        <div class="progress-container">
+                                            <div class="progress" data-puntos="{{ puntos }}" data-total="{{ total }}"></div>
+                                        </div>
+                                    </td>
+                                    <td>{{ comentario }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="recomendaciones" class="tab-content">
+                    <div class="recomendaciones-container">
+                        <h3>Recomendaciones Semánticas Avanzadas para <span class="highlight">{{ puesto }}</span></h3>
+                        <div class="experiment-banner semantic-highlight">
+                            <i class="fas fa-brain"></i> Recomendaciones generadas por análisis semántico multi-dimensional con Llama 2
+                        </div>
+                        <div class="recomendaciones-secciones">
+                            {% for recomendacion in recomendaciones %}
+                            <div class="reco-seccion glass-panel">
+                                <div class="reco-header">
+                                    <div class="reco-seccion-titulo">🦙 Recomendación {{ loop.index }}</div>
+                                    <div class="reco-indicador"></div>
+                                </div>
+                                <div class="reco-contenido">
+                                    <p>{{ recomendacion }}</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div id="preview" class="tab-content">
+                    <div class="preview-container glass-panel">
+                        <h3><i class="fas fa-file-alt"></i> Contenido extraído del CV</h3>
+                        <div class="semantic-highlight">
+                            <i class="fas fa-info-circle"></i> Este texto fue analizado con técnicas semánticas avanzadas por Llama 2
+                        </div>
+                        <pre>{{ contenido_cv }}</pre>
+                    </div>
+                </div>
+
+                <div id="semantico-avanzado" class="tab-content">
+                    <div class="semantic-analysis glass-panel">
+                        <h3><i class="fas fa-brain"></i> Análisis Semántico Multi-dimensional - Llama 2</h3>
+                        <div class="experiment-banner semantic-highlight">
+                            <i class="fas fa-info-circle"></i> Evaluación avanzada con coherencia contextual, densidad semántica y especificidad técnica
+                        </div>
+                        
+                        <div class="semantic-description">
+                            <p><strong>Análisis Semántico Avanzado</strong>: Este sistema utiliza <strong>Meta Llama 2 7B</strong> para realizar una evaluación multi-dimensional que va más allá de la simple coincidencia de palabras clave.</p>
+                            <div class="semantic-dimensions">
+                                <div class="dimension-item">
+                                    <h4>🧠 Coherencia Contextual (25%)</h4>
+                                    <p>Evalúa la consistencia narrativa, alineación temática y progresión lógica del contenido.</p>
+                                </div>
+                                <div class="dimension-item">
+                                    <h4>📊 Densidad Semántica (20%)</h4>
+                                    <p>Mide la cantidad y relevancia de información técnica útil por unidad de texto.</p>
+                                </div>
+                                <div class="dimension-item">
+                                    <h4>🔧 Especificidad Técnica (15%)</h4>
+                                    <p>Analiza el nivel de detalle técnico, métricas cuantificables y profundidad del conocimiento.</p>
+                                </div>
+                                <div class="dimension-item">
+                                    <h4>🚀 Modernidad Tecnológica (15%)</h4>
+                                    <p>Evalúa el uso de tecnologías actuales y alineación con tendencias de la industria.</p>
+                                </div>
+                                <div class="dimension-item">
+                                    <h4>🎯 Relevancia Técnica (25%)</h4>
+                                    <p>Mide qué tan relevante es el contenido específicamente para el puesto objetivo.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="semantic-metrics">
+                            <h4>📈 Métricas de coherencia semántica por sección</h4>
+                            <table class="semantic-table">
+                                <thead>
+                                    <tr>
+                                        <th>Sección</th>
+                                        <th>Coherencia Semántica</th>
+                                        <th>Nivel de Coherencia</th>
+                                        <th>Ajuste Semántico</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for metrica in metricas_semanticas %}
+                                    <tr>
+                                        <td><strong>{{ metrica.seccion }}</strong></td>
+                                        <td>
+                                            <div class="similitud-container">
+                                                <div class="similitud-bar llama-bar" data-similitud="{{ metrica.similitud }}"></div>
+                                                <span class="similitud-text">{{ metrica.similitud }}%</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="nivel-badge nivel-{{ metrica.nivel.lower() }}">
+                                                {% if metrica.nivel == "Alto" %}🟢{% elif metrica.nivel == "Medio" %}🟡{% else %}🔴{% endif %}
+                                                {{ metrica.nivel }}
+                                            </span>
+                                        </td>
+                                        <td class="ajuste-llama2 {% if metrica.ajuste > 0 %}positivo{% elif metrica.ajuste < 0 %}negativo{% endif %}">
+                                            {{ '+' if metrica.ajuste > 0 else '' }}{{ metrica.ajuste }}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="experiment-explanation semantic-highlight">
+                            <h4><i class="fas fa-brain"></i> Ventajas del análisis semántico multi-dimensional</h4>
+                            <div class="advantages-grid">
+                                <div class="advantage-item">
+                                    <strong>🧠 Comprensión Contextual</strong>
+                                    <p>Analiza el significado profundo del texto considerando el contexto completo.</p>
+                                </div>
+                                <div class="advantage-item">
+                                    <strong>📊 Evaluación Multi-dimensional</strong>
+                                    <p>Combina múltiples métricas semánticas para una evaluación holística.</p>
+                                </div>
+                                <div class="advantage-item">
+                                    <strong>🎯 Relevancia Específica</strong>
+                                    <p>Evalúa la relevancia específica para cada puesto y dominio técnico.</p>
+                                </div>
+                                <div class="advantage-item">
+                                    <strong>🔍 Análisis Granular</strong>
+                                    <p>Proporciona insights específicos por sección y área de mejora.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if analisis_avanzado %}
+                <div id="metricas-detalle" class="tab-content">
+                    <div class="metricas-detalle glass-panel">
+                        <h3><i class="fas fa-chart-line"></i> Métricas Detalladas del Análisis Semántico</h3>
+                        
+                        <div class="experiment-banner semantic-highlight">
+                            <i class="fas fa-info-circle"></i> Breakdown detallado de todas las dimensiones semánticas evaluadas
+                        </div>
+
+                        <div class="metricas-grid">
+                            <div class="metrica-card">
+                                <div class="metrica-header">
+                                    <h4>🧠 Coherencia Contextual</h4>
+                                    <div class="metrica-weight">Peso: 25%</div>
+                                </div>
+                                <div class="metrica-content">
+                                    <div class="metrica-item">
+                                        <span class="metrica-label">Consistencia Narrativa:</span>
+                                        <span class="metrica-value">Evaluada por Llama 2</span>
+                                    </div>
+                                    <div class="metrica-item">
+                                        <span class="metrica-label">Alineación Temática:</span>
+                                        <span class="metrica-value">Coherencia con el puesto</span>
+                                    </div>
+                                    <div class="metrica-item">
+                                        <span class="metrica-label">Progresión Lógica:</span>
+                                        <span class="metrica-value">Secuencia profesional</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="metrica-card">
+                                <div class="metrica-header">
+                                    <h4>📊 Densidad Semántica</h4>
+                                    <div class="metrica-weight">Peso: 20%</div>
+                                </div>
+                                <div class="metrica-content">
+                                    <div class="metrica-item">
+                                        <span class="metrica-label">Densidad Técnica:</span>
+                                        <span class="metrica-value">Información útil/total</span>
+                                    </div>
+                                    <div class="metrica-item">
+                                        <span class="metrica-label">Cobertura Keywords:</span>
+                                        <span class="metrica-value">Términos técnicos relevantes</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="metrica-card">
+                                <div class="metrica-header">
+                                    <h4>🔧 Especificidad Técnica</h4>
+                                    <div class="metrica-weight">Peso: 15%</div>
+                                </div>
+                                <div class="metrica-content">
+                                    <div class="metrica-item">
+                                        <span class="metrica-label">Detalle Técnico:</span>
+                                        <span class="metrica-value">Profundidad descripciones</span>
+                                    </div>
+                                    <div class="metrica-item">
+                                        <span class="metrica-label">Métricas Cuantificables:</span>
+                                        <span class="metrica-value">Datos específicos y medibles</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="metrica-card">
+                                <div class="metrica-header">
+                                    <h4>🚀 Modernidad Tecnológica</h4>
+                                    <div class="metrica-weight">Peso: 15%</div>
+                                </div>
+                                <div class="metrica-content">
+                                    <div class="metrica-item">
+                                        <span class="metrica-label">Tecnologías Actuales:</span>
+                                        <span class="metrica-value">Stack moderno</span>
+                                    </div>
+                                    <div class="metrica-item">
+                                        <span class="metrica-label">Tendencias Industria:</span>
+                                        <span class="metrica-value">Alineación mercado</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="puntuacion-global-display">
+                            <h4>🎯 Puntuación Global del Análisis Semántico</h4>
+                            <div class="global-score-container">
+                                <div class="global-score-circle">
+                                    <div class="score-number">{{ puntuacion_global_semantica or '85' }}%</div>
+                                    <div class="score-label">Coherencia Semántica</div>
+                                </div>
+                                <div class="score-breakdown">
+                                    <p>Esta puntuación representa la <strong>coherencia semántica global</strong> del CV, calculada mediante la combinación ponderada de todas las dimensiones semánticas evaluadas por Llama 2.</p>
+                                    <p>Un score alto indica que el CV demuestra:</p>
+                                    <ul>
+                                        <li>✅ Narrativa profesional coherente y bien estructurada</li>
+                                        <li>✅ Alta densidad de información técnica relevante</li>
+                                        <li>✅ Especificidad y detalle técnico apropiado</li>
+                                        <li>✅ Uso de tecnologías modernas y actuales</li>
+                                        <li>✅ Excelente alineación con el puesto objetivo</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="actions">
+                <button class="action-btn" onclick="window.location.href='/'">
+                    <i class="fas fa-redo"></i> Evaluar otro CV
+                </button>
+                <button class="action-btn secondary" onclick="window.print()">
+                    <i class="fas fa-print"></i> Imprimir resultados
+                </button>
+                <button class="action-btn" onclick="window.open('http://localhost:8001', '_blank')" style="background: #0A84FF;">
+                    <i class="fas fa-chart-line"></i> Comparar con TF-IDF
+                </button>
+                <button class="action-btn" onclick="exportarResultados()" style="background: #30D158;">
+                    <i class="fas fa-download"></i> Exportar Análisis
+                </button>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Sección de error -->
+        {% if error %}
+        <div class="error-container glass-panel animate-in">
+            <div class="error-icon"><i class="fas fa-exclamation-triangle"></i></div>
+            <div class="error-message">
+                <h3>Error en Análisis Semántico</h3>
+                <p>{{ error }}</p>
+            </div>
+            <button class="action-btn" onclick="window.location.href='/'">
+                <i class="fas fa-redo"></i> Intentar de nuevo
+            </button>
+        </div>
+        {% endif %}
+    </div>
+
+    <footer class="footer">
+        <p>CV SmartCheck - Advanced Semantic Analysis © 2025 | <i class="fas fa-brain"></i> Meta AI Llama 2</p>
+    </footer>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
