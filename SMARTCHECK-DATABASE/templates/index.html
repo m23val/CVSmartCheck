@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV SmartCheck</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="hero-section">
+        <div class="circle-blur circle-blur-1"></div>
+        <div class="circle-blur circle-blur-2"></div>
+    </div>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a class="nav-logo" href="/">CV SmartCheck</a>
+            <div class="nav-menu">
+                {% if user %}
+                    <a href="/history" class="nav-link">Mi Historial</a>
+                    <button id="logoutButton" class="nav-button">Cerrar Sesión</button>
+                {% else %}
+                    <button id="showRegisterBtn" class="nav-link">Registrarse</button>
+                    <button id="showLoginBtn" class="nav-button">Iniciar Sesión</button>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="container" id="main-container">
+        
+        {% if user %}
+        <div id="logged-in-view" class="glass-container">
+            <div class="app-header">
+                <h1><i class="fas fa-file-upload"></i> Analiza tu CV</h1>
+                <p class="subtitulo">Bienvenido de nuevo, <span class="highlight">{{ user.email }}</span>. Sube tu CV para comenzar.</p>
+            </div>
+            <div id="upload-section" class="form-section">
+                </div>
+        </div>
+
+        {% else %}
+        <div id="public-view">
+
+            <div class="public-hero">
+                <h1 class="public-title">Transforma tu Currículum con Inteligencia Artificial</h1>
+                <p class="public-subtitle">Obtén un análisis detallado, una puntuación precisa y recomendaciones personalizadas para que tu CV destaque sobre el resto.</p>
+                <a href="#auth-section" class="cta-button">Empezar Ahora</a>
+            </div>
+
+            <div class="features-section glass-panel">
+                <h2 class="section-title">¿Qué Analizamos en tu CV?</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-star"></i></div>
+                        <h3>Puntuación Global</h3>
+                        <p>Una métrica de 0 a 100 que resume la calidad y optimización general de tu currículum.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-puzzle-piece"></i></div>
+                        <h3>Análisis por Secciones</h3>
+                        <p>Evaluamos cada parte de tu CV (Perfil, Experiencia, Habilidades, etc.) de forma individual.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-lightbulb"></i></div>
+                        <h3>Recomendaciones con IA</h3>
+                        <p>Recibe consejos específicos y accionables para mejorar cada sección y potenciar tu perfil.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-brain"></i></div>
+                        <h3>Similitud Semántica</h3>
+                        <p>Usamos BERT para entender el contexto y la relevancia de tu texto, no solo palabras clave.</p>
+                    </div>
+                </div>
+            </div>
+
+            
+        </div>
+        {% endif %}
+    </div>
+
+    <div id="authModal" class="modal">
+        <div class="modal-content glass-modal" id="authModalContent"></div>
+    </div>
+    
+    <div id="progressModal" class="modal">
+        <div class="modal-content">
+            <div class="spinner-container"><div class="spinner"></div><div id="loading-text" class="spinner-text">Analizando...</div></div>
+        </div>
+    </div>
+
+    <div id="confirmationModal" class="modal">
+        <div class="modal-content glass-modal" id="confirmationModalContent">
+            <div class="modal-header">
+                <h3 id="confirmationTitle">Confirmación</h3>
+                <button class="modal-close" id="confirmationCloseBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmationMessage">¿Estás seguro?</p>
+            </div>
+            <div class="modal-actions">
+                <button class="action-btn secondary" id="confirmationNoBtn">No</button>
+                <button class="action-btn" id="confirmationYesBtn">Sí</button>
+            </div>
+        </div>
+    </div>
+
+
+   <div id="progressModal" class="modal">
+        <div class="modal-content">
+            <div class="spinner-container">
+                <div class="spinner"></div>
+                <div id="loading-text" class="spinner-text">Analizando tu currículum...</div>
+                <!-- Añadimos el contenedor para el temporizador -->
+                <div class="spinner-timer" id="countdown-container">Tiempo estimado: <span id="countdown">7</span> segundos</div>
+            </div>
+        </div>
+    </div>
+    <footer class="footer">
+        <p>CV SmartCheck © 2025 | Potenciado por IA</p>
+    </footer>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
