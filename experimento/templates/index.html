@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV SmartCheck - Modelo Experimental</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="hero-section">
+        <div class="circle-blur circle-blur-1"></div>
+        <div class="circle-blur circle-blur-2"></div>
+    </div>
+
+    <div class="container glass-container">
+        <div class="app-header">
+            <h1><i class="fas fa-flask"></i> CV SmartCheck - Modelo Experimental</h1>
+            <p class="subtitulo">Evaluación de CVs usando TF-IDF y Análisis Semántico Alternativo</p>
+        </div>
+
+        <!-- Formulario inicial -->
+        {% if not resultado %}
+        <div id="mainForm" class="form-section">
+            <form action="/analizar" method="post" enctype="multipart/form-data" id="uploadForm">
+                <div class="form-group">
+                    <label for="puestoSelect">
+                        <i class="fas fa-briefcase"></i> Selecciona el puesto deseado
+                    </label>
+                    <div class="select-wrapper">
+                        <select name="puesto" required id="puestoSelect">
+                            <option value="" disabled selected>-- Selecciona un puesto --</option>
+                            <option value="Desarrollador Full Stack">Desarrollador Full Stack</option>
+                            <option value="Ingeniero DevOps">Ingeniero DevOps</option>
+                            <option value="Científico de Datos / Machine Learning Engineer">Científico de Datos / ML Engineer</option>
+                            <option value="Administrador de Bases de Datos (DBA)">Administrador de Bases de Datos (DBA)</option>
+                            <option value="Arquitecto de Software">Arquitecto de Software</option>
+                            <option value="Ingeniero de Redes">Ingeniero de Redes</option>
+                            <option value="Desarrollador de Aplicaciones Móviles">Desarrollador de Aplicaciones Móviles</option>
+                            <option value="Ingeniero de Inteligencia Artificial">Ingeniero de IA</option>
+                            <option value="Ingeniero Cloud">Ingeniero Cloud</option>
+                            <option value="Ingeniero de Pruebas Automatizadas">Ingeniero de Pruebas Automatizadas</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="fileInput">
+                        <i class="fas fa-file-upload"></i> Sube tu currículum
+                    </label>
+                    <div class="file-drop-area" id="fileDrop">
+                        <span class="file-message">
+                            <!-- El contenido será reemplazado por JavaScript -->
+                        </span>
+                        <input type="file" name="archivo" accept=".pdf,.docx" required id="fileInput">
+                    </div>
+                    <div class="file-info" id="fileInfo"></div>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    <span class="btn-text"><i class="fas fa-flask"></i> Analizar CV (Modelo Experimental)</span>
+                    <span class="btn-icon"><i class="fas fa-arrow-right"></i></span>
+                </button>
+            </form>
+        </div>
+        {% endif %}
+
+        <!-- Modal de progreso -->
+        <div id="progressModal" class="modal">
+            <div class="modal-content">
+                <div class="spinner-container">
+                    <div class="spinner"></div>
+                    <div class="spinner-text">Analizando con modelo experimental...</div>
+                    <div class="spinner-timer">Tiempo restante: <span id="countdown">7</span> segundos</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de resultados -->
+        {% if resultado %}
+        <div id="resultadoContainer" class="resultado-container animate-in">
+            <div class="resultado-header">
+                <h2><i class="fas fa-flask"></i> Resultados Experimentales para: {{ nombre }}</h2>
+                <div class="puntaje-container">
+                    <div class="puntaje-circle {% if resultado < 50 %}bajo{% elif resultado < 85 %}medio{% else %}alto{% endif %}">
+                        <div class="puntaje-number">{{ resultado }}</div>
+                        <div class="puntaje-label">Puntos</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tabs-container">
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="detalles" onclick="openTab(event, 'detalles')">
+                        <i class="fas fa-list-alt"></i> Detalles
+                    </button>
+                    <button class="tab-btn" data-tab="recomendaciones" onclick="openTab(event, 'recomendaciones')">
+                        <i class="fas fa-lightbulb"></i> Recomendaciones
+                    </button>
+                    <button class="tab-btn" data-tab="preview" onclick="openTab(event, 'preview')">
+                        <i class="fas fa-eye"></i> Vista previa
+                    </button>
+                    <button class="tab-btn" data-tab="experimental" onclick="openTab(event, 'experimental')">
+                        <i class="fas fa-flask"></i> Datos Experimentales
+                    </button>
+                </div>
+
+                <div id="detalles" class="tab-content active">
+                    <div class="tabla-resultados glass-panel">
+                        <div class="experiment-banner">
+                            <i class="fas fa-flask"></i> Análisis realizado con el modelo experimental TF-IDF
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th><i class="fas fa-tag"></i> Sección</th>
+                                    <th><i class="fas fa-check"></i> Puntos</th>
+                                    <th><i class="fas fa-chart-bar"></i> Progreso</th>
+                                    <th><i class="fas fa-comment"></i> Coherencia Semántica</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for seccion, puntos, total, comentario in detalles %}
+                                <tr class="{% if puntos < total * 0.5 %}bajo{% elif puntos < total * 0.85 %}medio{% else %}alto{% endif %}">
+                                    <td><strong>{{ seccion }}</strong></td>
+                                    <td>{{ puntos }} / {{ total }}</td>
+                                    <td>
+                                        <div class="progress-container">
+                                            <div class="progress" data-puntos="{{ puntos }}" data-total="{{ total }}"></div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {{ comentario }}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="recomendaciones" class="tab-content">
+                    <div class="recomendaciones-container">
+                        <h3>Recomendaciones para <span class="highlight">{{ puesto }}</span></h3>
+                        <div class="experiment-banner">
+                            <i class="fas fa-flask"></i> Recomendaciones generadas por el modelo experimental TF-IDF
+                        </div>
+                        <div class="recomendaciones-secciones">
+                            {% for recomendacion in recomendaciones %}
+                            <div class="reco-seccion glass-panel">
+                                <div class="reco-header">
+                                    <div class="reco-seccion-titulo">Recomendación {{ loop.index }}</div>
+                                    <div class="reco-indicador"></div>
+                                </div>
+                                <div class="reco-contenido">
+                                    <p>{{ recomendacion }}</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div id="preview" class="tab-content">
+                    <div class="preview-container glass-panel">
+                        <h3><i class="fas fa-file-alt"></i> Contenido extraído del CV</h3>
+                        <pre>{{ contenido_cv }}</pre>
+                    </div>
+                </div>
+
+                <div id="experimental" class="tab-content">
+                    <div class="semantic-analysis glass-panel">
+                        <h3><i class="fas fa-flask"></i> Análisis Semántico con TF-IDF</h3>
+                        <div class="experiment-banner">
+                            <i class="fas fa-info-circle"></i> Datos técnicos del análisis experimental
+                        </div>
+                        
+                        <div class="semantic-description">
+                            <p>Este análisis utiliza <strong>TF-IDF (Term Frequency-Inverse Document Frequency)</strong> combinado con <strong>similitud coseno</strong> para evaluar la coherencia semántica entre el CV y perfiles ideales para el puesto seleccionado.</p>
+                            <p>A diferencia de BERT (que utiliza modelos neuronales profundos), este enfoque es más ligero y se basa en la frecuencia de términos importantes y su relevancia contextual.</p>
+                        </div>
+                        
+                        <div class="semantic-metrics">
+                            <h4>Métricas de similitud por sección</h4>
+                            <table class="semantic-table">
+                                <thead>
+                                    <tr>
+                                        <th>Sección</th>
+                                        <th>Similitud TF-IDF</th>
+                                        <th>Similitud Keywords</th>
+                                        <th>Similitud Combinada</th>
+                                        <th>Nivel</th>
+                                        <th>Ajuste</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for metrica in metricas_semanticas %}
+                                    <tr>
+                                        <td><strong>{{ metrica.seccion }}</strong></td>
+                                        <td>
+                                            <div class="similitud-container">
+                                                <div class="similitud-bar tfidf-bar" data-similitud="{{ metrica.similitud }}"></div>
+                                                <span class="similitud-text">{{ metrica.similitud }}%</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="similitud-container">
+                                                <div class="similitud-bar keywords-bar" data-similitud="{{ metrica.similitud }}"></div>
+                                                <span class="similitud-text">{{ metrica.similitud }}%</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="similitud-container">
+                                                <div class="similitud-bar combined-bar" data-similitud="{{ metrica.similitud }}"></div>
+                                                <span class="similitud-text">{{ metrica.similitud }}%</span>
+                                            </div>
+                                        </td>
+                                        <td>{{ metrica.nivel }}</td>
+                                        <td class="ajuste-bert {% if metrica.ajuste > 0 %}positivo{% elif metrica.ajuste < 0 %}negativo{% endif %}">
+                                            {{ '+' if metrica.ajuste > 0 else '' }}{{ metrica.ajuste }}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="experiment-explanation">
+                            <h4><i class="fas fa-info-circle"></i> Explicación del método experimental</h4>
+                            <p><strong>TF-IDF (Term Frequency-Inverse Document Frequency)</strong>: Esta técnica evalúa la importancia de una palabra en un documento, considerando su frecuencia en el documento y su rareza en el corpus general. Las palabras que son frecuentes en un documento pero raras en general reciben una mayor puntuación.</p>
+                            <p><strong>Análisis de palabras clave</strong>: Complementariamente, se evalúa la presencia de términos específicos relevantes para el puesto.</p>
+                            <p><strong>Similitud Coseno</strong>: Medida matemática que determina cuán similares son dos vectores de texto, tratando los documentos como puntos en un espacio multidimensional.</p>
+                            <p>La <strong>puntuación combinada</strong> integra estos métodos para evaluar la coherencia semántica general.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="action-btn" onclick="window.location.href='/'">
+                    <i class="fas fa-redo"></i> Evaluar otro CV
+                </button>
+                <button class="action-btn secondary" onclick="window.print()">
+                    <i class="fas fa-print"></i> Imprimir resultados
+                </button>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Sección de error -->
+        {% if error %}
+        <div class="error-container glass-panel animate-in">
+            <div class="error-icon"><i class="fas fa-exclamation-triangle"></i></div>
+            <div class="error-message">
+                <h3>Error</h3>
+                <p>{{ error }}</p>
+            </div>
+            <button class="action-btn" onclick="window.location.href='/'">
+                <i class="fas fa-redo"></i> Intentar de nuevo
+            </button>
+        </div>
+        {% endif %}
+    </div>
+
+    <footer class="footer">
+        <p>CV SmartCheck - Modelo Experimental © 2025 | <i class="fas fa-flask"></i> Propósito Educativo</p>
+    </footer>
+
+    <!-- Cargar el archivo JavaScript externo -->
+    <script src="/static/app.js"></script>
+</body>
+</html>
